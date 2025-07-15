@@ -1,21 +1,26 @@
 const express = require('express');
+const cors = require('cors'); // ← CORS module import
+
 const app = express();
+
+// Use middlewares
+app.use(cors());              // ← Enable CORS for frontend requests
 app.use(express.json());
 
 let messages = [];
 
 app.post('/webhook/telegram', (req, res) => {
   try {
-    const msg = req.body?.message?.text; // ఎర్రర్ రాకుండా ασφαగా చదవటం
+    const msg = req.body?.message?.text;
     console.log('Telegram Message:', msg);
 
     if (msg) {
-      messages.push(msg); // ఖాళీ msg అయితే add చేయదు
+      messages.push(msg);
     }
 
     res.sendStatus(200);
   } catch (e) {
-    console.error('Error:', e); // error వస్తే console లో చూపుతుంది
+    console.error('Error:', e);
     res.sendStatus(500);
   }
 });
