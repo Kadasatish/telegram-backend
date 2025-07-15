@@ -2,16 +2,28 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+let messages = [];
+
 app.post('/webhook/telegram', (req, res) => {
-  console.log('Telegram Message:', req.body);
-  res.sendStatus(200);
+  try {
+    const msg = req.body?.message?.text; // ఎర్రర్ రాకుండా ασφαగా చదవటం
+    console.log('Telegram Message:', msg);
+
+    if (msg) {
+      messages.push(msg); // ఖాళీ msg అయితే add చేయదు
+    }
+
+    res.sendStatus(200);
+  } catch (e) {
+    console.error('Error:', e); // error వస్తే console లో చూపుతుంది
+    res.sendStatus(500);
+  }
 });
 
-app.get('/', (req, res) => {
-  res.send('Bot is running!');
+app.get('/messages', (req, res) => {
+  res.json(messages);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Server is running...');
 });
